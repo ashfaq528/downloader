@@ -25,20 +25,3 @@ exports.headerKey = catchAsyncErrors(async (req, res, next) => {
   // }
   return next();
 });
-
-// function decrypt(encryptedText, key, iv) {
-//   const decipher = crypto.createDecipheriv(
-//     'aes-256-cbc',
-//     Buffer.from(key),
-//     Buffer.from(iv)
-//   );
-//   let decrypted = decipher.update(encryptedText, 'base64', 'utf8');
-//   decrypted += decipher.final('utf8');
-//   res.status(201).json({
-//     status: 201,
-//     result: decrypted,
-//   });
-// }
-
-// const decryptedText = decrypt(token, key, iv);
-// console.log('Decrypted Text:', decryptedText);

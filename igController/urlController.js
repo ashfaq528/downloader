@@ -1,5 +1,7 @@
 const express = require('express');
-const youtubeDl = require('youtube-dl-exec');
+const youtubeDl = require('youtube-dl-exec').create(
+  'C:\\Users\\hp\\AppData\\Roaming\\Python\\Python313\\Scripts\\yt-dlp'
+);
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const id = uuidv4();
@@ -7,6 +9,7 @@ const filterDataObj = require('./filterDataObject');
 const catchAsyncErrors = require('./../Utils/asyncErrorHandler');
 const AppError = require('../Utils/AppError');
 const { error } = require('console');
+const { captureRejectionSymbol } = require('events');
 
 const unixTimeStemp = Math.floor(
   Date.now() + (30 * 24 * 60 * 60 * 1000) / 1000
@@ -38,7 +41,7 @@ exports.downloder = catchAsyncErrors(async (req, res, next) => {
     console.log('line 62', process.env.PROXY_URL);
     // 2) Pass url and cookies to YOUTUBE DL EXAC
     var data = await youtubeDl(url, {
-      proxy: proxyUrl,
+      // proxy: proxyUrl,
       dumpSingleJson: true,
       cookies: fileName,
     });
@@ -46,7 +49,7 @@ exports.downloder = catchAsyncErrors(async (req, res, next) => {
     console.log('Proxy works fine');
   } else {
     var data = await youtubeDl(url, {
-      proxy: proxyUrl,
+      // proxy: proxyUrl,
       dumpSingleJson: true,
     });
     console.log('no proxy');
@@ -54,6 +57,7 @@ exports.downloder = catchAsyncErrors(async (req, res, next) => {
 
   // Delete Cookie File
   filterDataObj.deleteCookiefile(fileName);
+
   if (data.formats) {
     console.log('formats');
     const urlAndType = await filterDataObj.getTypeAndUrl(data.formats);
@@ -73,10 +77,11 @@ exports.downloder = catchAsyncErrors(async (req, res, next) => {
       status: 200,
       result: finalResponse,
     });
-  } else if (data.entries.length === 0) {
-    const err = new AppError('Post not Found', 404);
+  } else if (data._type === 'playlist') {
+    console.log('length', data.playlist_count);
+    const err = new AppError('Images might not available', 403);
     return next(err);
-  } else if (data.entries) {
+  } else if (data.entries.formats) {
     console.log('formats:', data.entries[0].formats);
     const urlAndType = await filterDataObj.getTypeAndUrl(
       data.entries[0].formats
@@ -98,10 +103,22 @@ exports.downloder = catchAsyncErrors(async (req, res, next) => {
 exports.imageDownloaderTest = async (req, res) => {
   try {
     const url = req.body.url;
+    const planeCookie = req.headers.cookie;
+    var fileName = `cookies--${id}.txt`;
+    exports.dpFileName = fileName;
+    // // Setup Netscape format
+    const netScape = '# Netscape HTTP Cookie File';
+    const cookie = `${netScape}\n.instagram.com\tTRUE\t/\tFALSE\t${unixTimeStemp}\tsessionid\t${planeCookie}`;
+    console.log(cookie);
+    fs.writeFile(fileName, cookie, 'utf8', () => {
+      console.log('File Written successfuly');
+    });
     const dataImage = await youtubeDl(url, {
       dumpSingleJson: true,
+      cookies: fileName,
     });
     if (dataImage.entries.length === 0) {
+      console.log('Entries:', dataImage.entries);
     }
     res.status(200).json({
       status: 'Succes',

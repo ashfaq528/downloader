@@ -4,33 +4,24 @@ const deleteFile = (cookieFile) => {
   deleteCookie.deleteCookiefile(cookieFile);
 };
 const devErrors = (res, error) => {
-  // deleteFile(fileName.fileName);
   res.status(error.statusCode).json({
     status: error.statusCode,
     message: error.message,
     stackTrace: error.stack,
     error: error,
   });
-  if (error.isOperational === true) {
-    res.status(error.statusCode).json({
-      status: error.statusCode,
-      message: error.message,
-    });
-  }
 };
 const prodErrors = (res, error) => {
-  // console.log('line16', fileName.dpFileName);
-  // console.log(error.nameOfFile);
-  // res.status(error.statusCode).json({
-  //   status: error.statusCode,
-  //   message: error.message,
-  // });
   if (error.isOperational === true) {
-    res.status(error.statusCode).json({
+    return res.status(error.statusCode).json({
       status: error.statusCode,
       message: error.message,
     });
   }
+  res.status(error.statusCode).json({
+    status: error.statusCode,
+    message: error.message,
+  });
 };
 module.exports = (error, req, res, next) => {
   if (fileName.dpFileName !== undefined) {
@@ -70,12 +61,12 @@ module.exports = (error, req, res, next) => {
       error.message = 'Instagram Story: Please Login and Follow to download';
     }
     if (error.message.includes('Unable to extract video url')) {
-      error.statusCode = 404;
-      error.message = 'Post Not Found!';
+      error.statusCode = 403;
+      error.message = 'Image not Found';
     }
     if (error.message.includes('No video formats found')) {
-      error.statusCode = 404;
-      error.message = 'Post Not Found!';
+      error.statusCode = 403;
+      error.message = 'Image might not available';
     }
     prodErrors(res, error);
   }
