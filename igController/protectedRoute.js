@@ -19,7 +19,7 @@ exports.headerKey = catchAsyncErrors(async (req, res, next) => {
   const preTimestamp = decrypted.match(/\d+$/)[0] * 1;
   const newTimeStemp = Date.now();
   console.log(decrypted);
-  if (newTimeStemp - preTimestamp > 120000) {
+  if (newTimeStemp - preTimestamp > 120000000) {
     const err = new AppError('Route is not defined yet', 400);
     return next(err);
   }
