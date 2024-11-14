@@ -1,7 +1,5 @@
 const express = require('express');
-const youtubeDl = require('youtube-dl-exec').create(
-  'C:\\Users\\hp\\AppData\\Roaming\\Python\\Python313\\Scripts\\yt-dlp'
-);
+const youtubeDl = require('youtube-dl-exec');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const id = uuidv4();

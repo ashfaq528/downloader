@@ -37,9 +37,12 @@ module.exports = (error, req, res, next) => {
       error.statusCode = 400;
       error.status = 'Invalid url';
     }
-    if (error.message.includes('HTTP Error 400')) {
+    if (
+      error.message.includes('HTTP Error 400') &&
+      error.message.includes('Instagram API is not granting access')
+    ) {
       error.statusCode = 404;
-      error.message = 'Please enter a valid Url';
+      error.message = 'Not Found';
     }
     if (
       !error.message.includes('HTTP Error 400') &&
@@ -62,11 +65,22 @@ module.exports = (error, req, res, next) => {
     }
     if (error.message.includes('Unable to extract video url')) {
       error.statusCode = 403;
-      error.message = 'Image not Found';
+      error.message = 'Image might not available';
     }
     if (error.message.includes('No video formats found')) {
       error.statusCode = 403;
       error.message = 'Image might not available';
+    }
+    if (error.message.includes('Could not resolve host')) {
+      error.statusCode = 404;
+      error.message = 'invalid URL';
+    }
+    if (
+      error.message.includes('rate-limit reached') &&
+      error.message.includes('No csrf token set by Instagram API')
+    ) {
+      error.statusCode = 401;
+      error.message = 'Session Expired! Please Login again';
     }
     prodErrors(res, error);
   }
