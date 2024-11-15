@@ -11,6 +11,9 @@ const app = express();
 app.use(express.json());
 app.use(morgan('dev'));
 app.post('/api/v1/instaDown', protect.headerKey, urlController.downloder);
+app.get('/', (req, res) => {
+  res.send('My api isworking now');
+});
 app.all('*', (req, res, next) => {
   const err = new AppError(`Can't find the ${req.originalUrl}`, 404);
   next(err);
