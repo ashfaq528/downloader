@@ -25,7 +25,6 @@ const prodErrors = (res, error) => {
 };
 module.exports = (error, req, res, next) => {
   if (fileName.dpFileName !== undefined) {
-    console.log(fileName.dpFileName);
     deleteFile(fileName.dpFileName);
   }
   error.statusCode = error.statusCode || 500;

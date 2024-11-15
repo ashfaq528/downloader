@@ -23,11 +23,7 @@ exports.getTypeAndUrl = (data) => {
     videoUrl: data[index].url,
     type: data[index].video_ext,
   };
-  console.log(results, index);
   return typeAndUrl;
-
-  //   console.log(data);
-  //   return results;
 };
 exports.finalAction = (typeUrl, tnail) => {
   let responseObject = {};

@@ -10,12 +10,9 @@ const app = express();
 
 app.use(express.json());
 app.use(morgan('dev'));
-app.post('/api/v1/instagram', protect.headerKey, urlController.downloder);
-app.post('/api/v1/instagram/image', urlController.imageDownloaderTest);
+app.post('/api/v1/instaDown', protect.headerKey, urlController.downloder);
 app.all('*', (req, res, next) => {
-  console.log('eror');
   const err = new AppError(`Can't find the ${req.originalUrl}`, 404);
-
   next(err);
 });
 app.use(globalErrorHandler);

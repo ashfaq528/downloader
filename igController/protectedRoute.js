@@ -1,9 +1,7 @@
 const crypto = require('crypto');
 const catchAsyncErrors = require('./../Utils/asyncErrorHandler');
 const AppError = require('./../Utils/AppError');
-const { error } = require('console');
 
-console.log(process.env.IV);
 exports.headerKey = catchAsyncErrors(async (req, res, next) => {
   const encryptedText = req.headers.token;
   const key = process.env.KEY;
@@ -18,8 +16,7 @@ exports.headerKey = catchAsyncErrors(async (req, res, next) => {
 
   const preTimestamp = decrypted.match(/\d+$/)[0] * 1;
   const newTimeStemp = Date.now();
-  console.log(decrypted);
-  if (newTimeStemp - preTimestamp > 120000000) {
+  if (newTimeStemp - preTimestamp > 120000) {
     const err = new AppError('Route is not defined yet', 400);
     return next(err);
   }
